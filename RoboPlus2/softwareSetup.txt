@@ -1,1 +1,4 @@
 http://www.robotis.us/roboplus2/
+make sure you update the software right after install
+
+This tool can do the Firmware recovery that is needed if you change IDEs
