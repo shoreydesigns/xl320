@@ -1,0 +1,7 @@
+After Arduino IDE is run, click File → Preferences in the top menu of the IDE. When the Preferences window appears, copy and paste following link to the Additional Boards Manager URLs textbox.
+https://raw.githubusercontent.com/ROBOTIS-GIT/OpenCM9.04/master/arduino/opencm_release/package_opencm9.04_index.json
+
+Click Tools → Board → Boards Manager
+Type OpenCR into the textbox to find the OpenCR by ROBOTIS package. After it finds out, click Install.
+
+http://emanual.robotis.com/docs/en/software/arduino_ide/#software-installation
