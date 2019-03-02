@@ -40,13 +40,15 @@ void setup() {
   Dxl.writeByte (3, 24, 0); // Broadcast to all XL-320's to disable torque using Broadcast ID# 254
   Dxl.writeByte (5, 24, 0); // Broadcast to all XL-320's to disable torque using Broadcast ID# 254
   delay(100);
+  Dxl.writeByte(1,5,10); //RW Response Delay Time            0  254  250
+  Dxl.writeByte(2,5,10); //RW Response Delay Time            0  254  250
   pinMode(BOARD_LED_PIN, OUTPUT);
 }
 
 
 void loop() 
 {
-   Dxl.writeByte (1, 24, 1); // Broadcast to all XL-320's to disable torque using Broadcast ID# 254
+  // Dxl.writeByte (1, 24, 1); // Broadcast to all XL-320's to disable torque using Broadcast ID# 254
   // Dxl.writeWord (1, 15, 1023); // Max Torque
   /*
   int count = 0;
@@ -76,7 +78,7 @@ void loop()
      Dxl.ledOn(2, 0);// LED off
      Dxl.writeByte (1, 24, 0); // Broadcast to all XL-320's to disable torque using Broadcast ID# 254
    }
-   //                                                                        | min|max  |Intial Value
+    //  Control Table of EEPROM Area                                          | min|max  |Intial Value
     //SerialUSB.println(Dxl.readWord(1,0)); //R Model Number                    -  -    350
     //SerialUSB.println(Dxl.readByte(1,2)); //R Firmware Version                -  --
     //SerialUSB.println(Dxl.readByte(1,3)); //RW DYNAMIXEL ID                   0  252  1
@@ -95,10 +97,33 @@ void loop()
     // 1 PING  & READ Instruction 	Status Packet will be returned only for READ Instruction
     // 2 All Instructions 	Status Packet will be returned for all Instructions
 
-    //SerialUSB.println(Dxl.readByte(1,18)); //RW Shutdown Error Information    0 7  3
+    //SerialUSB.println(Dxl.readByte(1,18)); //RW Shutdown Error Information    0  7    3
+    
+    //  RAM Area                                                             | min|max  |Intial Value
+    //SerialUSB.println(Dxl.readByte(1,24)); //RW Motor Torque On/Off           0  1    0
+    //SerialUSB.println(Dxl.readByte(1,25)); //RW RGB LED                       0  7    0
+    //SerialUSB.println(Dxl.readByte(1,27)); //RW D Derivative Gain             0  254  0
+    //SerialUSB.println(Dxl.readByte(1,28)); //RW I Integral Gain               0  254  0
+    //SerialUSB.println(Dxl.readByte(1,29)); //RW P Proportional Gain           0  254  32
+    
+    //SerialUSB.println(Dxl.readWord(1,30)); //RW Desired Position              0  1023  -
+    //SerialUSB.println(Dxl.readWord(1,32)); //RW Moving Speed(Velocity)        0  2047  -
+    //SerialUSB.println(Dxl.readWord(1,35)); //RW Torque Limit(Goal Torque)     0  1023  -
+    //SerialUSB.println(Dxl.readWord(1,37)); //R Present Position               -  -     -
+    //SerialUSB.println(Dxl.readWord(1,39)); //R Present Speed                  -  -     -
+    //SerialUSB.println(Dxl.readWord(1,41)); //R Present Load                   -  -     -
+    
+    //SerialUSB.println(Dxl.readByte(1,45)); //R Present Voltage                -  -     -
+    //SerialUSB.println(Dxl.readByte(1,46)); //R Present Temperature            -  -     -
+    //SerialUSB.println(Dxl.readByte(1,47)); //R If Instruction is registered   -  -     0
+    //SerialUSB.println(Dxl.readByte(1,49)); //R Moving Movement Status         -  -     0
+    //SerialUSB.println(Dxl.readByte(1,50)); //R Hardware Error Status          -  -     0
+    //SerialUSB.println(Dxl.readWord(1,45)); //RW Punch Min Current Threshold   0  1023  32
+  
+  
     
    //if (
-   SerialUSB.println((Dxl.readWord(2,37) - Dxl.readWord(2,30)) - (Dxl.readWord(1,37) - Dxl.readWord(1,30)));
+  // SerialUSB.println((Dxl.readWord(2,37) - Dxl.readWord(2,30)) - (Dxl.readWord(1,37) - Dxl.readWord(1,30)));
  //SerialUSB.println(Dxl.readWord(2,37) - Dxl.readWord(2,30)); // delta of Goal Position & Present Position
   //SerialUSB.println(Dxl.readWord(2,37)); //Present Position
   //SerialUSB.println(Dxl.readByte(2,49)); //Moving
