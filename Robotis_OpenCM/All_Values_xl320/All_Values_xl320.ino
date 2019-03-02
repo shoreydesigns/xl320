@@ -88,7 +88,15 @@ void loop()
     //SerialUSB.println(Dxl.readByte(1,12)); //RW Temperature Limit             0  159  65
     //SerialUSB.println(Dxl.readByte(1,13)); //RW Min Voltage Limit             50 250  65
     //SerialUSB.println(Dxl.readByte(1,14)); //RW Max Voltage Limit             50 250  90
-     //SerialUSB.println(Dxl.readWord(1,15)); //RW Max Torque                   0  1023 1023
+    //SerialUSB.println(Dxl.readWord(1,15)); //RW Max Torque                    0  1023 1023
+    //SerialUSB.println(Dxl.readByte(1,17)); //RW Status Return Level           0  2     2 
+    // This value decides how to return Status Packet when Dynamixel receives an Instruction Packet.
+    // 0 PING Instruction 	Status Packet will not be returned for all Instructions
+    // 1 PING  & READ Instruction 	Status Packet will be returned only for READ Instruction
+    // 2 All Instructions 	Status Packet will be returned for all Instructions
+
+    //SerialUSB.println(Dxl.readByte(1,18)); //RW Shutdown Error Information    0 7  3
+    
    //if (
    SerialUSB.println((Dxl.readWord(2,37) - Dxl.readWord(2,30)) - (Dxl.readWord(1,37) - Dxl.readWord(1,30)));
  //SerialUSB.println(Dxl.readWord(2,37) - Dxl.readWord(2,30)); // delta of Goal Position & Present Position
