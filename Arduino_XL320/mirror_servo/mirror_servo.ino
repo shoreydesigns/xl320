@@ -69,6 +69,7 @@
     // 0 PING Instruction   Status Packet will not be returned for all Instructions
     // 1 PING  & READ Instruction   Status Packet will be returned only for READ Instruction
     // 2 All Instructions   Status Packet will be returned for all Instructions
+#define ADDR_SHUTDOWN_ERROR 18//Byte //RW Shutdown Error Information    0  7    3
 
 //  RAM Area                                                        | min|max  |Intial Value
 #define ADDR_TORQUE_ENABLE 24  //Byte RW Motor Torque On/Off           0  1    0
@@ -84,17 +85,15 @@
 #define ADDR_PRESENT_SPEED 39 //Word R Present Speed                   -  -     -
 #define ADDR_PRESENT_LOAD 41 //Word R Present Load                     -  -     -
 
-   //SerialUSB.println(Dxl.readByte(1,45)); //R Present Voltage                -  -     -
-    //SerialUSB.println(Dxl.readByte(1,46)); //R Present Temperature            -  -     -
-    //SerialUSB.println(Dxl.readByte(1,47)); //R If Instruction is registered   -  -     0
-    //SerialUSB.println(Dxl.readByte(1,49)); //R Moving Movement Status         -  -     0
-    //SerialUSB.println(Dxl.readByte(1,50)); //R Hardware Error Status          -  -     0
-    //SerialUSB.println(Dxl.readWord(1,45)); //RW Punch Min Current Threshold   0  1023  32
+#define ADDR_PRESENT_VOLTAGE 45 //BytE R Present Voltage               -  -     -
+#define ADDR_TEMP 46 //Byte R Present Temperature                      -  -     -
+#define ADDR_INSTRUCTION_REGISTERED 47//Byte R If Instruction is registered - - 0
+#define ADDR_MOVEMENT_STATUS 49// Byte /R Moving Movement Status       -  -     0
+#define ADDR_HARDWARE_ERROR 50//Byte R Hardware Error Status           -  -     0
+#define ADDR_PUNCH 51 //Word  RW Punch Min Current Threshold           0  1023  32
 
     
-//#define ADDR_TORQUE_ENABLE          24                 // Control table address is different in Dynamixel model
-//#define ADDR_GOAL_POSITION          30 //?
-//#define ADDR_PRESENT_POSITION      37
+
 
 // Protocol version
 #define PROTOCOL_VERSION                2.0                 // See which protocol version is used in the Dynamixel
@@ -107,8 +106,8 @@
 
 #define TORQUE_ENABLE                   1                   // Value for enabling the torque
 #define TORQUE_DISABLE                  0                   // Value for disabling the torque
-#define DXL_MINIMUM_POSITION_VALUE      100                 // Dynamixel will rotate between this value
-#define DXL_MAXIMUM_POSITION_VALUE      400                 // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
+#define DXL_MINIMUM_POSITION_VALUE      200                 // Dynamixel will rotate between this value
+#define DXL_MAXIMUM_POSITION_VALUE      600                 // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
 #define DXL_MOVING_STATUS_THRESHOLD     20                  // Dynamixel moving status threshold
 
 #define ESC_ASCII_VALUE                 0x1b
