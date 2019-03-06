@@ -342,37 +342,4 @@ void loop() {
 
 }
 
-/*
- * 
- *  // Disable Dynamixel Torque
- // dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, SLAVE_ID, ADDR_TORQUE_SWITCH, TORQUE_OFF, &dxl_error);
- /*
-  if (dxl_comm_result != COMM_SUCCESS)
-  {
-    packetHandler->getTxRxResult(dxl_comm_result);
-  }
-  else if (dxl_error != 0)
-  {
-    packetHandler->getRxPacketError(dxl_error);
-  }
 
-
-
- * 
- // Serial.print(Dxl.readWord(1,37));
-     // Read present position
-     // dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, SLAVE_ID, ADDR_PRESENT_POSITION, (uint16_t*)&present_position320XL); //, &dxl_error);
-     
-    //Serial.print(packetHandler->read2ByteTxRx(portHandler, SLAVE_ID, ADDR_PRESENT_POSITION, (uint16_t*)&present_position320XL, &dxl_error));
-   // Serial.print(" PresPosition:");  Serial.print(present_position320XL);
-   //ADDR_CCW_ANGLE_LIMIT
-   packetHandler->read2ByteTxRx(portHandler, SLAVE_ID, ADDR_CCW_ANGLE_LIMIT, (uint16_t*)&ccwAngleLimit);
-   Serial.print(" PresPosition:");  Serial.print(ccwAngleLimit);
-    Serial.print(" \n");
-    packetHandler->read2ByteTxRx(portHandler, SLAVE_ID, ADDR_PRESENT_POSITION, (uint16_t*)&present_position320XL);
-    Serial.print(" PresPosition:");  Serial.print(present_position320XL);
-    Serial.print(" \n");
-    Serial.print("Press any key to continue! (or press q to quit!)\n");
-
- * /
- */
