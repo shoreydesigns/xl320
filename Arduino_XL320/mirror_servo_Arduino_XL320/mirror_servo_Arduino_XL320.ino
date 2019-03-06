@@ -260,7 +260,7 @@ void setup() {
     ch = Serial.read();
     if (ch == 'q')
       break;
-
+writeToServo(DXL_ID, ADDR_GOAL_POSITION,dxl_goal_position[index]  ); // ( int id, int command, int val)
     // Write goal position
     dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, DXL_ID, ADDR_GOAL_POSITION, dxl_goal_position[index], &dxl_error);
     if (dxl_comm_result != COMM_SUCCESS)
