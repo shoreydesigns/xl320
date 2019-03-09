@@ -112,7 +112,25 @@
 #define DXL_MOVING_STATUS_THRESHOLD     20                  
 
 #define ESC_ASCII_VALUE                 0x1b
+/*
+// Protocol version
+#define PROTOCOL_VERSION                2.0                 // See which protocol version is used in the Dynamixel
 
+// Default setting
+#define MASTER_ID                          1                   // Dynamixel ID: 1
+#define SLAVE_ID                          2                   // Dynamixel ID: 2
+#define BAUDRATE                        1000000
+#define DEVICENAME                      "1"                 // Check which port is being used on your controller
+                                                            // ex) Windows: "COM1"   Linux: "/dev/ttyUSB0"
+//#define MYLOAD    200                 // and this value (note that the Dynamixel would not mynamixel you use.)
+#define TORQUE_ON                   1                   // Value for enabling the torque
+#define TORQUE_OFF                  0                   // Value for disabling the torque
+#define DXL_MINIMUM_POSITION_VALUE      600                 // Dynamixel will rotate between this value
+#define DXL_MAXIMUM_POSITION_VALUE      200                 // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
+#define DXL_MOVING_STATUS_THRESHOLD     20                  // Dynamixel moving status threshold
+
+#define ESC_ASCII_VALUE                 0x1b
+*/
 
 
 void setup() {
@@ -132,11 +150,21 @@ void setup() {
 
   //int index = 0;
   int dxl_comm_result = COMM_TX_FAIL;             // Communication result
+  int M_present_pos = 0;
+  int S_present_pos = 0;
+  int M_goal_pos = 0;
+  int S_goal_pos = 0;
+  
+  
   //int dxl_goal_position[2] = {DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE};         // Goal position
+int16_t myLoad = 512; 
 
+uint8_t T_ON = 0;  
   uint8_t dxl_error = 0;                          // Dynamixel error
   int16_t Slave_present_position = 512;               // Present position
   int16_t Master_present_position = 512;               // Present position
+  int16_t Slave_goal_position = 512;               // goal position
+  int16_t Master_goal_position = 512;               // goal position
   //int16_t present_position320XL = 512;     // Present position  #define ADDR_PRESENT_POSITION      37
   //int16_t ccwAngleLimit = 0; //#define ADDR_CCW_ANGLE_LIMIT 8 //Word RW Counter-Clockwise Angle Limit  0  1023 1023
 
@@ -153,17 +181,101 @@ void setup() {
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, SLAVE_ID, ADDR_TORQUE_SWITCH, TORQUE_ON);
 
   // Disable Dynamixel Torque for master
-  dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_TORQUE_SWITCH, TORQUE_OFF);
-
+  //dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_TORQUE_SWITCH, TORQUE_ON);
+dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_TORQUE_SWITCH, TORQUE_OFF);
+//packetHandler->write1ByteTxRx(portHandler, SLAVE_ID, ADDR_LED, 2);// green LED
 //packetHandler->write2ByteTxRx(portHandler, SLAVE_ID, ADDR_MAX_TORQUE, 1023);
-packetHandler->write2ByteTxRx(portHandler, SLAVE_ID, ADDR_GOAL_TORQUE, 1023);
+packetHandler->write2ByteTxRx(portHandler, MASTER_ID, ADDR_GOAL_TORQUE, 0);
+packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_TORQUE_SWITCH, TORQUE_OFF);
+int x = 1;
 while(1)
   {
       // Read present position
-      dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, MASTER_ID, ADDR_PRESENT_POSITION, (uint16_t*)&Master_present_position);
-
+       
+      packetHandler->read2ByteTxRx(portHandler, SLAVE_ID, ADDR_PRESENT_LOAD , (uint16_t*)&myLoad);
+      M_present_pos = packetHandler->read2ByteTxRx(portHandler, MASTER_ID, ADDR_PRESENT_POSITION, (uint16_t*)&Master_present_position);
+      S_present_pos = packetHandler->read2ByteTxRx(portHandler, SLAVE_ID, ADDR_PRESENT_POSITION, (uint16_t*)&Slave_present_position);
+      M_goal_pos = packetHandler->read2ByteTxRx(portHandler, MASTER_ID, ADDR_GOAL_POSITION, (uint16_t*)&Master_goal_position);
+      S_goal_pos = packetHandler->read2ByteTxRx(portHandler, SLAVE_ID, ADDR_GOAL_POSITION, (uint16_t*)&Slave_goal_position);
       // Write Master Value to Slave
       packetHandler->write2ByteTxRx(portHandler, SLAVE_ID, ADDR_GOAL_POSITION, Master_present_position);
+//Serial.println(Slave_present_position  );
+//Serial.println(Slave_goal_position );
+
+
+Serial.println(myLoad  );
+      //if ((Dxl.readWord(2,37) - Dxl.readWord(2,30)) > 20 && ((Dxl.readWord(2,37) - Dxl.readWord(2,30)) < 500))
+      if ( (Slave_present_position - Slave_goal_position) > 20 && ((Slave_present_position - Slave_goal_position) < 500))
+      {
+        packetHandler->read1ByteTxRx(portHandler, SLAVE_ID, ADDR_TORQUE_SWITCH, &T_ON);
+         if ( T_ON  == 1)
+         {
+        // dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_TORQUE_SWITCH, TORQUE_OFF);
+         }
+        if (myLoad <400  && myLoad >150)
+        {
+          packetHandler->write1ByteTxRx(portHandler, SLAVE_ID, ADDR_LED, 3);// Purple LED
+        }
+        else
+        {
+         
+          packetHandler->write1ByteTxRx(portHandler, SLAVE_ID, ADDR_LED, 5);// Purple LED
+         // packetHandler->write2ByteTxRx(portHandler, MASTER_ID, ADDR_GOAL_TORQUE, 0);
+        }
+      }
+      // else if ((Dxl.readWord(2,37) - Dxl.readWord(2,30)) < -20 && (Dxl.readWord(2,37) - Dxl.readWord(2,30)) > -500)
+       else if ( (Slave_present_position - Slave_goal_position) < -20 && ((Slave_present_position - Slave_goal_position) > -500))
+      {
+       if (myLoad >1200)
+        {
+          packetHandler->write1ByteTxRx(portHandler, SLAVE_ID, ADDR_LED, 4);// blue LED
+         // dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_TORQUE_SWITCH, TORQUE_ON);
+        }
+        else
+        {
+          packetHandler->read1ByteTxRx(portHandler, SLAVE_ID, ADDR_TORQUE_SWITCH, &T_ON);
+         if ( T_ON  == 1)
+         {
+        // dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_TORQUE_SWITCH, TORQUE_OFF);
+         }
+         //Dxl.ledOn(2, 5);// Purple LED
+          packetHandler->write1ByteTxRx(portHandler, SLAVE_ID, ADDR_LED, 2);// Purple LED
+         // packetHandler->write2ByteTxRx(portHandler, MASTER_ID, ADDR_GOAL_TORQUE, 0);
+        }
+        
+      }
+      else
+      {
+        //Dxl.ledOn(2, 0);// LED off
+         packetHandler->write1ByteTxRx(portHandler, SLAVE_ID, ADDR_LED, 0);// LED off
+         //M_goal_pos= 
+         packetHandler->read1ByteTxRx(portHandler, SLAVE_ID, ADDR_TORQUE_SWITCH, &T_ON);
+         if ( T_ON  == 1)
+         {
+        // dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_TORQUE_SWITCH, TORQUE_OFF);
+         }
+      }
+///////////////////////////////////////////////////////////////////////////////////////
+
+       if ( (Master_present_position - Slave_present_position) > 20 && ((Master_present_position - Slave_present_position) < 500))
+      {
+         
+          packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_LED, 2);// Purple LED
+         
+      }
+      
+       else if ( (Master_present_position - Slave_present_position) < -20 && ((Master_present_position - Slave_present_position) > -500))
+      {
+       
+         packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_LED, 5);// green LED
+         
+      }
+      else
+      {
+        //Dxl.ledOn(2, 0);// LED off
+         packetHandler->write1ByteTxRx(portHandler, MASTER_ID, ADDR_LED, 0);// LED off
+      }
+      
   }
 
   // Close port
