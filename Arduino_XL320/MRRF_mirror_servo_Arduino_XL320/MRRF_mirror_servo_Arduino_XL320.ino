@@ -179,7 +179,7 @@ while(1)
       dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, MASTER_IDA, ADDR_PRESENT_POSITION, (uint16_t*)&Master_present_positionA);
 
       // Write Master Value to Slave
-      packetHandler->write2ByteTxRx(portHandler, SLAVE_IDA, ADDR_GOAL_POSITION, Master_present_positionA);
+      packetHandler->write2ByteTxRx(portHandler, SLAVE_IDA, ADDR_GOAL_POSITION, (Master_present_positionA -20));
 //////////////////////////////////////////////
        // Read present position
       dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, MASTER_IDB, ADDR_PRESENT_POSITION, (uint16_t*)&Master_present_positionB);
