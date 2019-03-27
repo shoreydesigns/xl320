@@ -92,9 +92,13 @@
 
 // Default setting
 // Dynamixel ID: 1
-#define MASTER_IDA                          1                   
+#define MASTER_IDA                          1  
+#define MASTER_IDB                          3 
+#define MASTER_IDC                          5                  
 // Dynamixel ID: 2
-#define SLAVE_IDA                          2                   
+#define SLAVE_IDA                          2 
+#define SLAVE_IDB                          4 
+#define SLAVE_IDC                          6                   
 #define BAUDRATE                        1000000
 // Check which port is being used on your controller
 #define DEVICENAME                      "1"                 
@@ -105,9 +109,9 @@
 // Value for disabling the torque
 #define TORQUE_OFF                  0                   
 // Dynamixel will rotate between this value
-#define DXL_MINIMUM_POSITION_VALUE      600                 
+#define DXL_MINIMUM_POSITION_VALUE      00                 
 // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
-#define DXL_MAXIMUM_POSITION_VALUE      200                 
+#define DXL_MAXIMUM_POSITION_VALUE      1023//200                 
 // Dynamixel moving status threshold
 #define DXL_MOVING_STATUS_THRESHOLD     20                  
 
@@ -135,8 +139,12 @@ void setup() {
   //int dxl_goal_position[2] = {DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE};         // Goal position
 
   uint8_t dxl_error = 0;                          // Dynamixel error
-  int16_t Slave_present_position = 512;               // Present position
-  int16_t Master_present_position = 512;               // Present position
+  int16_t Slave_present_positionA = 512;               // Present position
+    int16_t Slave_present_positionB = 512;               // Present position
+      int16_t Slave_present_positionC = 512;               // Present position
+  int16_t Master_present_positionA = 512;               // Present position
+    int16_t Master_present_positionB = 512;               // Present position
+      int16_t Master_present_positionC = 512;               // Present position
   //int16_t present_position320XL = 512;     // Present position  #define ADDR_PRESENT_POSITION      37
   //int16_t ccwAngleLimit = 0; //#define ADDR_CCW_ANGLE_LIMIT 8 //Word RW Counter-Clockwise Angle Limit  0  1023 1023
 
@@ -151,19 +159,39 @@ void setup() {
 
   // Enable Dynamixel Torque for slave
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, SLAVE_IDA, ADDR_TORQUE_SWITCH, TORQUE_ON);
+   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, SLAVE_IDB, ADDR_TORQUE_SWITCH, TORQUE_ON);
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, SLAVE_IDC, ADDR_TORQUE_SWITCH, TORQUE_ON);
+
+
 
   // Disable Dynamixel Torque for master
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_IDA, ADDR_TORQUE_SWITCH, TORQUE_OFF);
+    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_IDB, ADDR_TORQUE_SWITCH, TORQUE_OFF);
+      dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, MASTER_IDC, ADDR_TORQUE_SWITCH, TORQUE_OFF);
 
 //packetHandler->write2ByteTxRx(portHandler, SLAVE_ID, ADDR_MAX_TORQUE, 1023);
 packetHandler->write2ByteTxRx(portHandler, SLAVE_IDA, ADDR_GOAL_TORQUE, 1023);
+packetHandler->write2ByteTxRx(portHandler, SLAVE_IDB, ADDR_GOAL_TORQUE, 1023);
+packetHandler->write2ByteTxRx(portHandler, SLAVE_IDC, ADDR_GOAL_TORQUE, 1023);
 while(1)
   {
       // Read present position
-      dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, MASTER_IDA, ADDR_PRESENT_POSITION, (uint16_t*)&Master_present_position);
+      dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, MASTER_IDA, ADDR_PRESENT_POSITION, (uint16_t*)&Master_present_positionA);
 
       // Write Master Value to Slave
-      packetHandler->write2ByteTxRx(portHandler, SLAVE_IDA, ADDR_GOAL_POSITION, Master_present_position);
+      packetHandler->write2ByteTxRx(portHandler, SLAVE_IDA, ADDR_GOAL_POSITION, Master_present_positionA);
+//////////////////////////////////////////////
+       // Read present position
+      dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, MASTER_IDB, ADDR_PRESENT_POSITION, (uint16_t*)&Master_present_positionB);
+
+      // Write Master Value to Slave
+      packetHandler->write2ByteTxRx(portHandler, SLAVE_IDB, ADDR_GOAL_POSITION, Master_present_positionB);
+////////////////////////////////////////////////////////////////////
+       // Read present position
+      dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, MASTER_IDC, ADDR_PRESENT_POSITION, (uint16_t*)&Master_present_positionC);
+
+      // Write Master Value to Slave
+      packetHandler->write2ByteTxRx(portHandler, SLAVE_IDC, ADDR_GOAL_POSITION, Master_present_positionC);
   }
 
   // Close port
